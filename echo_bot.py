@@ -3,7 +3,8 @@ import json
 from telebot import types
 
 
-bot = telebot.TeleBot('6105146346:AAFcm1CVVly8GllMD_KXDBw0iF20x6RiW8g')
+
+bot = telebot.TeleBot('token')
 
 """ 
 @bot.message_handler(func=lambda m: True)
