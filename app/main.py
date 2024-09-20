@@ -14,7 +14,7 @@ def send_welcome(message):
     bot.reply_to(message, "Привет!")
     
 
-reply_markup=get_contact_keyboard()
+#reply_markup=get_contact_keyboard()
 
 
 def get_contact_keyboard():
