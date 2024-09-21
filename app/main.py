@@ -1,10 +1,8 @@
-import telebot
+
 from keyboards import *
 from session_db import session_users, session_tasks
 from feature import *
-from my_token import TOKEN
-
-bot = telebot.TeleBot(TOKEN)
+from my_token import bot
 
 
 
@@ -57,6 +55,7 @@ def handle_contact(message):
 
 if __name__ == "__main__":
     print('Start App . . .')
+    
     bot.polling(none_stop=True)
     print('Stop App . . .')
 
