@@ -23,10 +23,7 @@ def start_direct(message):
 def process_save(message):
     user_text = message.text
     user_id = message.from_user.id
-
-    
     session_tasks.create_db_task(user_text, 'err', 'err', time_now , '21.12.2024', user_id)
-
     bot.send_message(message.chat.id, 'Ваша задача сохранена!')
     bot.send_message(message.chat.id, 'Выберите действие:', reply_markup=main_menu_direct())
 
@@ -34,7 +31,6 @@ def process_edit_id(message):
     entry_id = message.text
     msg = bot.send_message(message.chat.id, 'Введите новое сообщение:')
     bot.register_next_step_handler(msg, process_edit_message, entry_id)
-
 
 def process_edit_message(message, entry_id):
     new_message = message.text

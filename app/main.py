@@ -1,12 +1,9 @@
 import telebot
 from keyboards import *
 from session_db import session_users, session_tasks
-from dotenv import load_dotenv
-import os
 from feature import *
+from my_token import TOKEN
 
-load_dotenv()
-TOKEN = os.getenv('TOKEN')
 bot = telebot.TeleBot(TOKEN)
 
 
