@@ -1,10 +1,9 @@
 import telebot
-from telebot import types
-from session_db import session
+from keyboards import *
+from session_db import session_users, session_tasks
 from dotenv import load_dotenv
-import os
-from session_db import session
-import sqlite3
+import time
+from feature import *
 
 """ load_dotenv()
 TOKEN = os.getenv('TOKEN') """
@@ -12,65 +11,37 @@ TOKEN = os.getenv('TOKEN') """
 bot = telebot.TeleBot('6105146346:AAFcm1CVVly8GllMD_KXDBw0iF20x6RiW8g')
 
 
-    
-# Создание или подключение к базе данных SQLite
-conn = sqlite3.connect('user_data.db', check_same_thread=False)
-cursor = conn.cursor()
-
-# Создание таблицы, если она не существует
-cursor.execute('''
-CREATE TABLE IF NOT EXISTS messages (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    user_id INTEGER,
-    message TEXT
-)
-''')
-conn.commit()
-
-
-# Функция для отображения клавиатуры с кнопками
-def main_menu():
-    markup_menu = types.ReplyKeyboardMarkup(resize_keyboard=True)
-    markup_menu.add(types.KeyboardButton("Сохранить сообщение"))
-    markup_menu.add(types.KeyboardButton("Редактировать сообщение"))
-    markup_menu.add(types.KeyboardButton("Удалить сообщение"))
-    markup_menu.add(types.KeyboardButton("Показать сообщения"))
-    markup_menu.add(types.KeyboardButton(''))
-    return markup_menu
-
-def tasks_menu(tasks_id_list:list[dict[int]:[str]]):
-    markup_tasks = types.ReplyKeyboardMarkup(resize_keyboard=True)
-    for task_id in tasks_id_list:
-        markup_tasks.add(types.KeyboardButton(f'{task_id}'))
-        print(task_id)
-    return markup_tasks
-
 
 @bot.message_handler(commands=['start'])
 def start(message):
-    bot.send_message(
-        message.chat.id,
-        'Здравствуйте! Используйте кнопки для взаимодействия с ботом.',
-        reply_markup=main_menu()
-    )
+    user_id = message.chat.id
+    if session_users.get_db_user(user_id):
+        start_direct(message)
+    else:
+        start_worker(message)
 
 
-@bot.message_handler(func=lambda message: message.text == "Сохранить сообщение")
-def save_message(message):
-    msg = bot.send_message(message.chat.id, 'Введите сообщение для сохранения:')
-    bot.register_next_step_handler(msg, process_save)
+@bot.message_handler(func=lambda message: message.text == "Посмотреть Мои Задачи")
+def tasks_menu_worker(message):
+    db_tasks_list = session_tasks.get_db_tasks_list(user_id=message.chat.id)
+    tasks_list = []
+    if db_tasks_list:
+        for msg in db_tasks_list:
+            tasks_list.append(1)   
+    else:
+        bot.send_message(message.chat.id, 'У вас нет сохранённых сообщений.')
+    tasks_menu(tasks_list)
 
 
 def process_save(message):
     user_text = message.text
     user_id = message.from_user.id
 
-    # Сохранение информации в базе данных
-    cursor.execute('INSERT INTO messages (user_id, message) VALUES (?, ?)', (user_id, user_text))
-    conn.commit()
+    
+    session_tasks.create_db_task(user_text, 'err', 'err', f'{time.localtime().tm_mday}.{time.localtime().tm_mon}.{time.localtime().tm_year}', '21.10.2024', user_id)
 
-    bot.send_message(message.chat.id, 'Ваша информация сохранена!')
-    bot.send_message(message.chat.id, 'Выберите действие:', reply_markup=main_menu())
+    bot.send_message(message.chat.id, 'Ваша задача сохранена!')
+    bot.send_message(message.chat.id, 'Выберите действие:', reply_markup=main_menu_direct())
 
 
 @bot.message_handler(func=lambda message: message.text == "Редактировать сообщение")
@@ -89,14 +60,14 @@ def process_edit_message(message, entry_id):
     new_message = message.text
     user_id = message.from_user.id
 
-    # Редактирование записи в базе данных
+"""     # Редактирование записи в базе данных
     cursor.execute('UPDATE messages SET message = ? WHERE id = ? AND user_id = ?', (new_message, entry_id, user_id))
     if cursor.rowcount > 0:
         conn.commit()
         bot.send_message(message.chat.id, 'Информация успешно отредактирована!')
     else:
         bot.send_message(message.chat.id, 'Запись с таким ID не найдена.')
-    bot.send_message(message.chat.id, 'Выберите действие:', reply_markup=main_menu())
+    bot.send_message(message.chat.id, 'Выберите действие:', reply_markup=main_menu_direct())
 
 
 @bot.message_handler(func=lambda message: message.text == "Удалить сообщение")
@@ -107,8 +78,7 @@ def delete_message(message):
     tasks_list = []
     if messages:
         for msg in messages:
-            tasks_list.append({msg[0]:msg[1]})
-        print(tasks_list)    
+            tasks_list.append({msg[0]:msg[1]})   
     else:
         bot.send_message(user_id, 'У вас нет сохранённых сообщений.')
     msg = bot.send_message(message.chat.id, 'Выберете ID сообщения для удаления:', reply_markup=tasks_menu(tasks_id_list=tasks_list))
@@ -127,7 +97,7 @@ def process_delete(message):
     else:
         bot.send_message(message.chat.id, 'Запись с таким ID не найдена.')
 
-    bot.send_message(message.chat.id, 'Выберите действие:', reply_markup=main_menu())
+    bot.send_message(message.chat.id, 'Выберите действие:', reply_markup=main_menu_direct())
 
 
 @bot.message_handler(func=lambda message: message.text == "Показать сообщения")
@@ -143,8 +113,8 @@ def show_messages(message):
         msg_text = 'У вас нет сохранённых сообщений.'
 
     bot.send_message(message.chat.id, msg_text)
-    bot.send_message(message.chat.id, 'Выберите действие:', reply_markup=main_menu())
-#reply_markup=get_contact_keyboard()
+    bot.send_message(message.chat.id, 'Выберите действие:', reply_markup=main_menu_direct())
+#reply_markup=get_contact_keyboard() """
 
 
 """ def get_contact_keyboard():
@@ -173,11 +143,7 @@ if __name__ == "__main__":
     bot.polling(none_stop=True)
     print('Stop App . . .')
 
-def close_connection():
-    conn.close()
 
-import atexit
-atexit.register(close_connection)
 
 
 

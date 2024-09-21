@@ -9,7 +9,36 @@ class Session:
     def __repr__(self) -> str:
         return f'{self}'
     
-        
+    def create_table_users(self):
+        connect = sqlite3.connect(self)
+        cursor = connect.cursor()
+        cursor.execute('''CREATE TABLE IF NOT EXISTS Users (
+                       name TEXT,
+                       user_id  INTEGER PRIMARY KEY,
+                       post TEXT,
+                       phone INTEGER UNIQUE,
+                       password TEXT
+        )
+        ''')
+        connect.commit()
+        connect.close()
+
+    def create_table_tasks(self):
+        connect = sqlite3.connect(self)
+        cursor = connect.cursor()
+        cursor.execute('''CREATE TABLE IF NOT EXISTS Tasks (
+                       title TEXT,
+                       descreption TEXT,
+                       status TEXT,
+                       start_time  TEXT,
+                       end_time TEXT,
+                       user_id INTEGER PRIMARY KEY
+        )
+        ''')
+        connect.commit()
+        connect.close()
+
+
     def create_db_user(self,
                     user_name:str, 
                     user_id:int, 
@@ -17,7 +46,6 @@ class Session:
                     number_phone:str, 
                     password:str):
         connect = sqlite3.connect(self.name)
-        print('tyt')
         cursor = connect.cursor()
 
         cursor.execute('''CREATE TABLE IF NOT EXISTS Users (
@@ -63,8 +91,23 @@ class Session:
         connect.commit()
         connect.close()
 
+    def get_db_user(self, user_id):
+        conn = sqlite3.connect('bot.db', check_same_thread=False)
+        cursor = conn.cursor()
+        cursor.execute('SELECT * FROM Users WHERE user_id = ?', (user_id,))
+        return True
+    
+    def get_db_tasks_list(self, user_id):
+        conn = sqlite3.connect('bot.db', check_same_thread=False)
+        cursor = conn.cursor()
+        cursor.execute('SELECT user_id FROM Tasks WHERE user_id = ?', (user_id,))
+        db_tasks_list = cursor.fetchall()
+        return db_tasks_list
+        
 
-session = Session('bot.db')
+
+session_users = Session.create_table_users('bot.db')
+session_tasks = Session.create_table_tasks('bot.db')
 
 
 """ session.create_db_user(user_name='admin',
@@ -78,7 +121,7 @@ session.create_db_task(title='Написать бота',
                             status='В процессе',
                             start_time=f'{time.localtime().tm_mday}.{time.localtime().tm_mon}.{time.localtime().tm_year}',
                             end_time='1.10.2024',
-                            user_id=549725325)   """                        
+                            user_id=549725325) """                          
 
 
 
