@@ -1,10 +1,17 @@
-from main import bot
+from my_token import bot
 from keyboards import *
-from session_db import session_tasks, session_users
 import time
+from session_db import session_users
+import random
 
 time_now = f'{time.localtime().tm_mday}.{time.localtime().tm_mon}.{time.localtime().tm_year}'
 
+def start_developer(message):
+    bot.send_message(
+        message.chat.id,
+        'Hi Developer!',
+        reply_markup=menu_develeper()
+    )
 
 def start_worker(message):
     bot.send_message(
@@ -20,29 +27,26 @@ def start_direct(message):
         reply_markup=main_menu_direct()
     )
 
-def process_save(message):
-    user_text = message.text
-    user_id = message.from_user.id
-    session_tasks.create_db_task(user_text, 'err', 'err', time_now , '21.12.2024', user_id)
-    bot.send_message(message.chat.id, 'Ваша задача сохранена!')
-    bot.send_message(message.chat.id, 'Выберите действие:', reply_markup=main_menu_direct())
+def start_reg_user(message):
+    bot.send_message(
+        message.chat.id, 'Отправь Свой Контакт',
+        reply_markup=start_register_user()
+    )
 
-def process_edit_id(message):
-    entry_id = message.text
-    msg = bot.send_message(message.chat.id, 'Введите новое сообщение:')
-    bot.register_next_step_handler(msg, process_edit_message, entry_id)
+def get_worker_list(msg):
+    worker_list = list_worker(msg)
+    return bot.send_message(msg.chat.id, 'Enter User: ', reply_markup=worker_list)
 
-def process_edit_message(message, entry_id):
-    new_message = message.text
-    user_id = message.from_user.id
-
-def get_contact_keyboard():
-    keyboard = types.ReplyKeyboardMarkup(one_time_keyboard=True)
-    button = types.KeyboardButton("Поделиться контактной информацией", request_contact=True)
-    keyboard.add(button)
-    return keyboard
-
-def process_delete(message):
-    entry_id = message.text[0]
-    user_id = message.from_user.id
+def get_contact_user(message):
+    contact = message.contact
+    user_id = message.chat.id
+    print(user_id)
+    post = 'dev'#сюда надо добавить функцию по поиску должности по номеру телефона который будет выдавать админ
+    password = random.randint(1000, 9999)
+    session_users.create_db_user(contact.first_name, message.chat.id, post, contact.phone_number, password)
+    print(f'New User Create:\nname: {contact.first_name}\nNumber: {contact.phone_number}')
+    return bot.reply_to(user_id, f"Спасибо! Вот твой контакт:\n"
+                          f"Имя: {contact.first_name} {contact.last_name}\n"
+                          f"Номер телефона: {contact.phone_number}\n"
+                          f"Твой пароль для WEB-версии: {password}")
 
