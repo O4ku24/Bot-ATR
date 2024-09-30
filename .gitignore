@@ -1,5 +1,6 @@
 /venv
 /.env
 /app/img
-/app/bot.db
-/app/test.py
+/test.py
+/test
+
