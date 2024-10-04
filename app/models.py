@@ -20,7 +20,7 @@ class Users():
         return f'{self}'
     
     def create_user(self):
-        session.create_db_user(user_name=self.name,
+        session.create_user(user_name=self.name,
                                user_id=self._user_id,
                                post=self.post,
                                number_phone=self._phone,

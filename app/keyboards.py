@@ -1,5 +1,7 @@
 from telebot import types
-from session_db import session_users
+from session_db import session
+
+
 
 def menu_develeper():
     markup_menu = types.ReplyKeyboardMarkup(resize_keyboard=True)
@@ -22,18 +24,14 @@ def main_menu_direct():
     markup_menu.add(types.KeyboardButton("Заявки для администратора"))
     markup_menu.add(types.KeyboardButton("Создать задачу для работника"))
     markup_menu.add(types.KeyboardButton("Создать задачу для администратора"))
-    markup_menu.add(types.KeyboardButton("Войти как работник"))
+    markup_menu.add(types.KeyboardButton("Все задачи"))
     return markup_menu
 
-def tasks_menu(tasks_id_list:list[dict[int]:[str]]) -> types.ReplyKeyboardMarkup:
-    """ принемает в себя:
-        LIST состоящий из 
-        DICT в которых 
-            ключ это INTEGER  
-            значение это STRING """
+def list_tasks():
     markup_tasks = types.ReplyKeyboardMarkup(resize_keyboard=True)
+    tasks_id_list = session.get_list_all_tasks()
     for task_id in tasks_id_list:
-        markup_tasks.add(types.KeyboardButton(f'{task_id}'))
+        markup_tasks.add(types.KeyboardButton(task_id))
     return markup_tasks
 
 def start_register_user():
@@ -41,10 +39,13 @@ def start_register_user():
     markup_nemu.add(types.KeyboardButton("Отправить Свой Контакт", request_contact=True))
     return markup_nemu
 
-def list_worker(msg):
-    
+def list_worker() -> types.ReplyKeyboardMarkup:
     markup_nemu = types.ReplyKeyboardMarkup(resize_keyboard=True)
-    workers_list = session_users.get_db_list_all_user(msg)
+    workers_list = session.get_list_all_users()
     for worker in workers_list:
-        markup_nemu.add(types.KeyboardButton(f'{worker}'))
+        markup_nemu.add(types.KeyboardButton((str(worker)).replace(',','').replace(')','').replace('(','').replace("'",'')))
     return markup_nemu
+
+def start():
+    markup_nemu = types.ReplyKeyboardMarkup(resize_keyboard=True)
+    markup_nemu.add(types.KeyboardButton('/Start'))

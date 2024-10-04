@@ -8,8 +8,8 @@ class Session:
     def __repr__(self) -> str:
         return f'{self}'
      
-  
-    def create_db_user(self,
+#Create User
+    def create_user(self,
                     user_name:str, 
                     user_id:int, 
                     post:str, 
@@ -32,7 +32,8 @@ class Session:
         
         connect.close()
     
-    def create_db_task(self, 
+#Create Task
+    def create_task(self, 
                        title:str,
                        descreption:str,
                        status:str,
@@ -61,48 +62,54 @@ class Session:
         connect.commit()
         connect.close()
 
-    def get_db_admin(self, user_id):
-        conn = sqlite3.connect('bot.db', check_same_thread=False)
+#Get Admin
+    def get_admin(self, user_id):
+        conn = sqlite3.connect('database.sqlite3', check_same_thread=False)
         cursor = conn.cursor()
         cursor.execute(f'SELECT * FROM Users WHERE user_id = {user_id} AND post = "admin"')
         if cursor.fetchall():   
             return True
         else:
             return False
-    
-    def get_db_developer(self, user_id):
-        conn = sqlite3.connect('bot.db', check_same_thread=False)
+
+#Get Developer
+    def get_developer(self, user_id):
+        conn = sqlite3.connect('database.sqlite3', check_same_thread=False)
         cursor = conn.cursor()
         cursor.execute(f'SELECT * FROM Users WHERE user_id = {user_id} AND post = "dev"')
         if cursor.fetchall():   
             return True
         else:
             return False
-        
-    def get_db_user_in_id(self, user_id):
-        conn = sqlite3.connect('bot.db', check_same_thread=False)
+
+#Get User In ID
+    def get_user_in_id(self, user_id):
+        conn = sqlite3.connect('database.sqlite3', check_same_thread=False)
         cursor = conn.cursor()
         cursor.execute('SELECT user_id FROM Users WHERE user_id = ? AND post = "work"', (user_id,))
         if cursor.fetchall():
             return True
         else:
             return False
-    
-    def get_db_list_all_user(self):
-        conn = sqlite3.connect('bot.db', check_same_thread=False)
+
+#Get List All Users
+    def get_list_all_users(self):
+        conn = sqlite3.connect('database.sqlite3', check_same_thread=False)
         cursor = conn.cursor()
-        cursor.execute('SELECT * FROM Users')
+        cursor.execute('SELECT name FROM Users')
         list_all_users = cursor.fetchall()
         return list_all_users
 
-    def get_db_list_all_tasks(self):
-        conn = sqlite3.connect('bot.db', check_same_thread=False)
+#Get List All Tasks
+    def get_list_all_tasks(self):
+        conn = sqlite3.connect('database.sqlite3', check_same_thread=False)
         cursor = conn.cursor()
-        cursor.execute('SELECT * FROM Tasks ')
+        cursor.execute('SELECT title FROM Tasks ')
         list_all_tasks = cursor.fetchall()
         return list_all_tasks
-    
-    def create_table_db_users(self):
+
+#Create Table
+    def create_table(self):
         connect = sqlite3.connect(self.name)
         cursor = connect.cursor()
         cursor.execute('''CREATE TABLE IF NOT EXISTS Users (
@@ -113,12 +120,7 @@ class Session:
                        password TEXT
         )
         ''')
-        connect.commit()
-        connect.close()
 
-    def creare_table_db_tasks(self):
-        connect = sqlite3.connect(self.name)
-        cursor = connect.cursor()
         cursor.execute('''CREATE TABLE IF NOT EXISTS Tasks (
                        title TEXT,
                        descreption TEXT,
@@ -132,9 +134,6 @@ class Session:
         connect.close()
 
 
-session_users = Session('bot.db')
-session_tasks = Session('bot.db')
 
 
-
-
+session = Session('database.sqlite3')

@@ -1,6 +1,4 @@
 /venv
 /.env
 /app/img
-/test.py
-/test
-
+/app/__pycach__
