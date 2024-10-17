@@ -34,21 +34,21 @@ def handle_contact(message):
 
 
     
-@bot.message_handler(content_types = 'text')
+@bot.message_handler(content_types='text')
 def enter_commands(message):
-    commands ={"Войти как админ":start_direct(message),
-               "Войти как":get_worker_list(message),
-               "Все задачи":get_tasks_list(message)}
-    for answer, value in commands.items():
-        print(F'1 - {message.text}')
-        if message.text == answer:
-            print(F'2 - {answer}')
-            bot.send_message(message.chat.id,
-                            'hi',
-                            reply_markup=value)
-        else:
-            bot.send_message(message.chat.id,
-                            'no')
+    commands = {
+        "Войти как админ": start_direct,
+        "Войти как": get_worker_list,
+        "Все задачи": get_tasks_list
+    }
+    command_function = commands.get(message.text)
+    if command_function:
+        reply_markup = command_function(message)
+        bot.send_message(message.chat.id, 'Выбирете действие: ', reply_markup=reply_markup)
+
+    else:
+        print(command_function)
+        bot.send_message(message.chat.id, 'Команда не распознана. Попробуйте еще раз.')
 
 
 if __name__ == "__main__":

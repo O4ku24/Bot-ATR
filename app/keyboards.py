@@ -31,7 +31,7 @@ def list_tasks():
     markup_tasks = types.ReplyKeyboardMarkup(resize_keyboard=True)
     tasks_id_list = session.get_list_all_tasks()
     for task_id in tasks_id_list:
-        markup_tasks.add(types.KeyboardButton(task_id))
+        markup_tasks.add(types.KeyboardButton((str(task_id)).replace("('",'').replace("',)",'')))
     return markup_tasks
 
 def start_register_user():

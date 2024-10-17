@@ -35,16 +35,15 @@ def start_reg_user(message):
 def get_worker_list(message):
     bot.send_message(
         message.chat.id, 
-        'Enter User: ', 
+        'Команда принята!', 
         reply_markup=list_worker())
     
 def get_tasks_list(message):
     bot.send_message(
         message.chat.id,
-        'Enter Task: ',
+        'Команда принята!',
         reply_markup=list_tasks()
     )
-    print('tyt')
 
 def get_contact_user(message):
     contact = message.contact
