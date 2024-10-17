@@ -2,4 +2,3 @@
 /.env
 /app/img
 /app/__pycach__
-/app/database.sqlite3
