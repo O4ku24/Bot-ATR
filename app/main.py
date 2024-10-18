@@ -1,7 +1,7 @@
 
-from keyboards import *
+from app.keyboards.keyboards import *
 from session_db import session
-from feature import *
+from app.functional.feature import *
 from my_token import bot
 
 

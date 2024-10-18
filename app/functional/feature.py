@@ -1,5 +1,5 @@
 from my_token import bot
-from keyboards import *
+from app.keyboards.keyboards import *
 from session_db import session
 import random
 
@@ -55,3 +55,6 @@ def get_contact_user(message):
     print(f'New User Create:\nname: {contact.first_name}\nNumber: {contact.phone_number}')
     return bot.send_message(user_id, f"Отлично! \nТвой логин: {contact.phone_number} \nТвой пароль для WEB-версии: {password}", reply_markup=start())
 
+def add_task(msg):
+    contact = msg.contact
+    user_id = msg.chat.id
