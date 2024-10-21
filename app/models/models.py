@@ -1,44 +1,45 @@
+from abc import ABC, abstractmethod
+import os
+from typing import Any, Dict, List
 
-from session_db import session
+from app.database.session_db import session
+
+from models_task import ChangeTask, CreateTask
+from models_user import ChangeUser, CreateUser
+
+from database.user_db import create_user
+
+class Model(ABC):
+    @abstractmethod
+    async def all(self) -> List[Any]:
+        raise NotImplementedError
+
+    @abstractmethod
+    async def add(self, data: Any) -> None:
+        raise NotImplementedError
 
 
-class Users():
-    def __init__(self, 
-                 user_name:str, 
-                 user_id:str, 
-                 post:str, 
-                 number_phone:str, 
-                 password:str
-                 ) -> None:
-        self.name = user_name
-        self._user_id = user_id
-        self.post = post
-        self._phone = number_phone
-        self._password = password
+
+
+class Users(Model):
+    def __init__(self, user_id: str,
+                 first_name: str,
+                 last_name: str,
+                 tg_id: int,
+                 post: str,
+                 phone: int,
+                 pin: int):
+        self.user_id = user_id,
+        self.first_name = first_name,
+        self.last_name = last_name,
+        self.tg_id = tg_id,
+        self.post = post,
+        self.phone = phone,
+        self.rin = pin
     
-    def __repr__(self) -> str:
-        return f'{self}'
-    
-    def create_user(self):
-        session.create_user(user_name=self.name,
-                               user_id=self._user_id,
-                               post=self.post,
-                               number_phone=self._phone,
-                               password=self._password)
-        print(f'Create User {self.name}')
-        
-
-    def get_user():
-        pass
-
-    def edit_user():
-        pass
-
-    def del_user():
-        pass
-
-
-
+    @staticmethod
+    def add(user: CreateUser) -> None:
+        session.connect(create_user)
 
 class Tasks():
     def __init__(self, 

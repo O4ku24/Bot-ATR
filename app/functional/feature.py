@@ -1,6 +1,6 @@
 from my_token import bot
 from app.keyboards.keyboards import *
-from session_db import session
+from app.database.session_db import session
 import random
 
 #time_now = f'{time.localtime().tm_mday}.{time.localtime().tm_mon}.{time.localtime().tm_year}'

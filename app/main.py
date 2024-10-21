@@ -1,6 +1,6 @@
 
 from app.keyboards.keyboards import *
-from session_db import session
+from app.database.session_db import session
 from app.functional.feature import *
 from my_token import bot
 
