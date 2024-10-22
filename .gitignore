@@ -1,5 +1,10 @@
 /venv
-/.env
+/bot/.env
 /app/img
 /app/__pycach__
 /app/database.sqlite3
+/database.sqlite3
+/__pycach__
+/app/__pycach__
+/bot/__pycach__
+/database/__pycach__

@@ -1,5 +1,5 @@
 from telebot import types
-from app.database.session_db import session
+from database.session_db import session
 
 
 

@@ -1,8 +1,7 @@
 
-from app.keyboards.keyboards import *
-from app.database.session_db import session
-from app.functional.feature import *
-from my_token import bot
+from .keyboards.keyboards import *
+from .functional.feature import *
+from .my_token import bot
 
 
 #Старт для работы с ботом
